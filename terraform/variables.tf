@@ -1,0 +1,2 @@
+variable "helloworld_replicas" {}
+
