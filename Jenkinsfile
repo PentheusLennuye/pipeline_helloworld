@@ -21,9 +21,9 @@ pipeline {
     disableConcurrentBuilds()
   }
   parameters {
+    // When a build gets triggered, the first choice becomes the default.
     choice(
       name: 'OPERATION',
-      defaultValue: 'Audit',
       choices: ['Audit', 'Deploy', 'Destroy'],
       description: 'Deployment Option'
     )
