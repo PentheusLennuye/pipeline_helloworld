@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "helloworld_main"
+    secret_suffix = "helloworld-main"
     config_path = "./kubeconfig"
   }
 }
