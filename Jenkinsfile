@@ -20,6 +20,14 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '5'))
     disableConcurrentBuilds()
   }
+  parameters {
+    choice(
+      name: 'OPERATION',
+      defaultValue: 'Audit',
+      choices: ['Audit', 'Deploy', 'Destroy'],
+      description: 'Deployment Option'
+    )
+  }
   stages{
     stage('Create kubeconfig from template') {
     // Not recommended in the long run (i.e. writing secrets to disk) but required
@@ -39,7 +47,17 @@ pipeline {
         }
       }
     }
-    stage('Ensure helloworld deployment runs') {
+    stage('Audit HelloWorld') {
+      when { equals expected: 'Audit', actual: params.OPERATION }
+      steps {
+        dir('terraform') {
+          sh 'terraform init' // safe to run multiple times
+          sh 'terraform plan -out the.plan'
+        }
+      }
+    }
+    stage('Deploy HelloWorld') {
+      when { equals expected: 'Audit', actual: params.OPERATION }
       steps {
         dir('terraform') {
           sh 'terraform init' // safe to run multiple times
@@ -48,7 +66,15 @@ pipeline {
         }
       }
     }
+    stage('Destroy HelloWorld') {
+      when { equals expected: 'Audit', actual: params.OPERATION }
+      steps {
+        dir('terraform') {
+          sh 'terraform init' // safe to run multiple times
+          sh 'terraform destroy -auto-approve .the.plan'
+        }
+      }
+    }
   }
 }
-
 
