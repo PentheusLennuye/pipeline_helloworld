@@ -72,7 +72,7 @@ pipeline {
       steps {
         dir('terraform') {
           sh 'terraform init' // safe to run multiple times
-          sh 'terraform destroy -auto-approve the.plan'
+          sh 'terraform destroy -auto-approve'
         }
       }
     }
