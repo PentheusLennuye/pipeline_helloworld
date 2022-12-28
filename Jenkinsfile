@@ -30,8 +30,9 @@ pipeline {
   }
   stages{
     stage('Create kubeconfig from template') {
-    // Not recommended in the long run (i.e. writing secrets to disk) but required
-    // for Kubernetes Terraform backend.
+    // Not recommended in the long run (i.e. writing secrets to disk) but
+    // required for Kubernetes Terraform backend. This backend permits a
+    // tfstate to be kept by Kubernetes as a secret.
       steps {
         withVault([vaultSecrets: secrets]) { 
           dir('terraform') {
@@ -57,7 +58,7 @@ pipeline {
       }
     }
     stage('Deploy HelloWorld') {
-      when { equals expected: 'Audit', actual: params.OPERATION }
+      when { equals expected: 'Deploy', actual: params.OPERATION }
       steps {
         dir('terraform') {
           sh 'terraform init' // safe to run multiple times
@@ -67,11 +68,11 @@ pipeline {
       }
     }
     stage('Destroy HelloWorld') {
-      when { equals expected: 'Audit', actual: params.OPERATION }
+      when { equals expected: 'Destroy', actual: params.OPERATION }
       steps {
         dir('terraform') {
           sh 'terraform init' // safe to run multiple times
-          sh 'terraform destroy -auto-approve .the.plan'
+          sh 'terraform destroy -auto-approve the.plan'
         }
       }
     }
