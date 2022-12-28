@@ -10,9 +10,8 @@ def secrets = [
 def k8sapi = "https://kubernetes.default.svc"
 pipeline {
   agent {
-    kubernetes {
-      defaultContainer 'shell'
-      yamlFile 'KubernetesPod.yml'
+    docker {
+      image 'hashicorp/terraform'
     }
   }
   options {
